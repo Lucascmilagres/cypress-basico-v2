@@ -85,7 +85,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     .should('have.value','');
   })
 
-  it.only('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+  it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
     cy.contains('Enviar').click();
 
     cy.get('.error').should('be.visible');
@@ -105,4 +105,45 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('.success').should('be.visible');
   })
 
+  it('seleciona um produto (YouTube) por seu texto', () => {
+    cy.get('#product').select('YouTube')
+    .should('have.value', 'youtube');
+  })
+
+  it('seleciona um produto (Mentoria) por seu valor (value)', () => {
+    cy.get('#product').select('mentoria')
+    .should('have.value', 'mentoria');
+  })
+
+  it('seleciona um produto (Blog) por seu índice', () => {
+    cy.get('#product').select(1)
+    .should('have.value', 'blog');
+  })
+
+  it('seleciona um produto por seu índice de forma aleatória', () => {
+    cy.get('select option')
+    .not('[disabled]')
+    .its('length', { log: false }).then(n => {
+        cy.get('#product').select(Cypress._.random(n - 1));
+    })
+  })
+
+  it('marca o tipo de atendimento "Feedback"(Busca mais genérica)', () => {
+    cy.get('[type="radio"]').check('feedback');
+
+    cy.get('#support-type :checked').should('be.checked').and('have.value', 'feedback');
+  })
+
+  it('marca o tipo de atendimento "Feedback" (Busca mais específica)', () => {  
+    cy.get('input[type="radio"][value="ajuda"]').check()
+    .should('be.checked');
+  })
+
+  it('marca cada tipo de atendimento', () => {
+    cy.get('[type="radio"]').each(typeOfService => {
+      cy.wrap(typeOfService)
+      .check()
+      .should('be.checked');
+    })
+  })
 })
