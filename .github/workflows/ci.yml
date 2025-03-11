@@ -11,9 +11,7 @@ jobs:
         run: npm install
         
       - name: Install Cypress
-        run: npm install cypress
+        run: npm install cypress@9.5.1 --save-dev
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        with:
-          config-file: cypress.config.js
