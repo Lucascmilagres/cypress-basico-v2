@@ -1,10 +1,3 @@
-// CAC-TAT.spec.js created with Cypress
-//
-// Start writing your Cypress tests below!
-// If you're unfamiliar with how Cypress works,
-// check out the link below and learn how to write your first test:
-// https://on.cypress.io/writing-first-test
-
 describe('Central de Atendimento ao Cliente TAT', function() {
 
   beforeEach(() => {
@@ -124,7 +117,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('select option')
     .not('[disabled]')
     .its('length', { log: false }).then(n => {
-        cy.get('#product').select(Cypress._.random(n - 1));
+      cy.get('#product').select(Cypress._.random(1, n));
     })
   })
 
@@ -146,4 +139,47 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       .should('be.checked');
     })
   })
+
+  it('marca ambos checkboxes, depois desmarca o último', () => {
+    cy.get('#check  input[type="checkbox"]').as('checkboxs').check().should('be.checked')
+
+    cy.get('@checkboxs').last().uncheck().should('not.be.checked');
+})
+
+it('seleciona um arquivo da pasta fixtures', () => {
+  cy.get('#file-upload')
+  .selectFile('cypress/fixtures/example.json')
+  .should(input => {
+    expect(input[0].files[0].name).to.equal('example.json')
+  })
+})
+
+it('seleciona um arquivo simulando um drag-and-drop', () => {
+  cy.get('#file-upload')
+  .selectFile('cypress/fixtures/example.json', { action: 'drag-drop'})
+  .then(input => {
+    expect(input[0].files[0].name).to.equal('example.json');
+  })
+})
+
+it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+  cy.fixture("example.json").as('sampleFile');
+  cy.get('#file-upload').selectFile('@sampleFile')
+  .then(input => {
+    expect(input[0].files[0].name).to.equal('example.json');
+  })
+})
+
+it('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', () => {
+  cy.contains('a', 'Política de Privacidade')
+  .should('have.attr', 'href', 'privacy.html')
+  .and('have.attr', 'target', '_blank');
+})
+
+it('acessa a página da política de privacidade removendo o target e então clicando no link', () => {
+  cy.contains('a', 'Política de Privacidade').invoke('removeAttr','target').click();
+
+  cy.contains('h1','CAC TAT - Política de privacidade').should('be.visible');
+})
+
 })
